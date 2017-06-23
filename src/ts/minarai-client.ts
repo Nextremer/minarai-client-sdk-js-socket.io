@@ -100,6 +100,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
 
   public sendSystemCommand(command, payload) {
     const message = { command, payload };
+    const timestamp = new Date().getTime();
     const payload = {
       id: `${this.applicationId}${this.clientId}${this.userId}${this.deviseId}-${timestamp}-system`,
       head: {

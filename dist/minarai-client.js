@@ -147,6 +147,7 @@ var MinaraiClient = (function (_super) {
     };
     MinaraiClient.prototype.sendSystemCommand = function (command, payload) {
         var message = { command, payload };
+        var timestamp = new Date().getTime();
         var payload = {
             id: "" + this.applicationId + this.clientId + this.userId + this.deviseId + "-" + timestamp + "-system",
             head: {
