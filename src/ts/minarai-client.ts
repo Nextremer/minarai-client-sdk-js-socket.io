@@ -9,6 +9,7 @@ export interface MinaraiClientConstructorOptions {
   applicationId: string;
   clientId?: string;
   userId?: string;
+  deviseId?: string;
   debug?: boolean;
   silent?: boolean;
 }
@@ -22,10 +23,16 @@ export interface SendOptions {
 export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
   constructor(opts: MinaraiClientConstructorOptions) {
     super();
+
+    if (!opts.io || !opts.socketIORootURL || !opts.applicationId) {
+      throw new InvalidArgumentError("opts must contain io, socketIORootURL, and applicationId");
+    }
+
     this.socket = opts.io.connect(opts.socketIORootURL, opts.socketIOOptions);
     this.applicationId = opts.applicationId;
     this.clientId = opts.clientId;
     this.userId = opts.userId;
+    this.deviseId = opts.deviseId || `devise_id_${this.applicationId}_${new Date().getTime()}`;
     this.lang = opts.lang || 'ja';
 
     logger.set({debug: opts.debug, silent: opts.silent});
@@ -40,7 +47,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
         applicationId: this.applicationId,
         clientId: this.clientId,
         userId: this.userId,
-        deviseId: `devise_id_${this.applicationId}_${new Date().getTime()}`,
+        deviseId: this.deviseId,
       });
     });
 
@@ -116,3 +123,5 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
   }
 }
 
+export class InvalidArgumentError extends Error {
+}

@@ -1,0 +1,3 @@
+--compilers ts:espower-typescript/guess
+--ui bdd
+--reporter spec
