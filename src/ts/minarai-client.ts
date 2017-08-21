@@ -21,6 +21,13 @@ export interface SendOptions {
 }
 
 export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
+  private socket: any;
+  private applicationId: string;
+  private clientId: string|number;
+  private userId: string|number;
+  private deviseId: string|number;
+  private lang: string|number;
+
   constructor(opts: MinaraiClientConstructorOptions) {
     super();
 
@@ -106,7 +113,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
   }
 
   public sendSystemCommand(command, payload) {
-    const message = { command, payload };
+    const message = { command: command, payload: payload };
     const timestamp = new Date().getTime();
     const payload = {
       id: `${this.applicationId}${this.clientId}${this.userId}${this.deviseId}-${timestamp}-system`,
@@ -116,7 +123,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
         userId: this.userId,
         deviseId: this.deviseId,
       },
-      body: { message }
+      body: { message: message },
     };
     logger.obj('send-system-command', payload);
     this.socket.emit('system-command', payload);
