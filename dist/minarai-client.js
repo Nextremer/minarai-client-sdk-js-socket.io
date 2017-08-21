@@ -1,5 +1,7 @@
 'use strict';
 
+Object.defineProperty(exports, '__esModule', { value: true });
+
 function __extends(d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -79,10 +81,14 @@ var MinaraiClient = (function (_super) {
     __extends(MinaraiClient, _super);
     function MinaraiClient(opts) {
         _super.call(this);
+        if (!opts.io || !opts.socketIORootURL || !opts.applicationId) {
+            throw new InvalidArgumentError("opts must contain io, socketIORootURL, and applicationId");
+        }
         this.socket = opts.io.connect(opts.socketIORootURL, opts.socketIOOptions);
         this.applicationId = opts.applicationId;
         this.clientId = opts.clientId;
         this.userId = opts.userId;
+        this.deviseId = opts.deviseId || "devise_id_" + this.applicationId + "_" + new Date().getTime();
         this.lang = opts.lang || 'ja';
         logger.set({ debug: opts.debug, silent: opts.silent });
     }
@@ -95,7 +101,7 @@ var MinaraiClient = (function (_super) {
                 applicationId: _this.applicationId,
                 clientId: _this.clientId,
                 userId: _this.userId,
-                deviseId: "devise_id_" + _this.applicationId + "_" + new Date().getTime()
+                deviseId: _this.deviseId,
             });
         });
         this.socket.on('disconnect', function () {
@@ -134,19 +140,19 @@ var MinaraiClient = (function (_super) {
                 userId: this.userId,
                 deviseId: this.deviseId,
                 lang: options.lang || 'ja-JP',
-                timestampUnixTime: timestamp
+                timestampUnixTime: timestamp,
             },
             body: {
                 message: uttr,
                 position: options.position || {},
-                extra: options.extra || {}
-            }
+                extra: options.extra || {},
+            },
         };
         logger.obj('send', payload);
         this.socket.emit('message', payload);
     };
     MinaraiClient.prototype.sendSystemCommand = function (command, payload) {
-        var message = { command, payload };
+        var message = { command: command, payload: payload };
         var timestamp = new Date().getTime();
         var payload = {
             id: "" + this.applicationId + this.clientId + this.userId + this.deviseId + "-" + timestamp + "-system",
@@ -154,14 +160,22 @@ var MinaraiClient = (function (_super) {
                 applicationId: this.applicationId,
                 clientId: this.clientId,
                 userId: this.userId,
-                deviseId: this.deviseId
+                deviseId: this.deviseId,
             },
-            body: { message }
+            body: { message: message },
         };
         logger.obj('send-system-command', payload);
         this.socket.emit('system-command', payload);
     };
     return MinaraiClient;
 }(EventEmitter2.EventEmitter2));
+var InvalidArgumentError = (function (_super) {
+    __extends(InvalidArgumentError, _super);
+    function InvalidArgumentError() {
+        _super.apply(this, arguments);
+    }
+    return InvalidArgumentError;
+}(Error));
 
-module.exports = MinaraiClient;
+exports['default'] = MinaraiClient;
+exports.InvalidArgumentError = InvalidArgumentError;
