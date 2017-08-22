@@ -128,6 +128,10 @@ var MinaraiClient = (function (_super) {
             logger.obj('message', data);
             _this.emit('message', data);
         });
+        this.socket.on('operator-command', function (data) {
+            logger.obj('operator-command', data);
+            _this.emit('operator-command', data);
+        });
     };
     MinaraiClient.prototype.send = function (uttr, options) {
         options = Object.assign({}, { lang: 'ja-JP' }, options || {});
