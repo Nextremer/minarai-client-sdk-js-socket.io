@@ -87,6 +87,11 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
       logger.obj('message', data);
       this.emit('message', data);
     });
+
+    this.socket.on('operator-command', (data:any) => {
+      logger.obj('operator-command', data);
+      this.emit('operator-command', data);
+    });
   }
 
   public send(uttr, options?: SendOptions) {
