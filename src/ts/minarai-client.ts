@@ -138,6 +138,11 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     logger.obj('send-system-command', payload);
     this.socket.emit('system-command', payload);
   }
+
+  public forceDisconnect() {
+    logger.obj('force-disconnect');
+    this.socket.emit('force-disconnect');
+  }
 }
 
 export class InvalidArgumentError extends Error {
