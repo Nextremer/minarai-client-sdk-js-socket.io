@@ -175,6 +175,10 @@ var MinaraiClient = (function (_super) {
         logger.obj('send-system-command', payload);
         this.socket.emit('system-command', payload);
     };
+    MinaraiClient.prototype.forceDisconnect = function () {
+        logger.obj('force-disconnect');
+        this.socket.emit('force-disconnect');
+    };
     return MinaraiClient;
 }(EventEmitter2.EventEmitter2));
 var InvalidArgumentError = (function (_super) {
