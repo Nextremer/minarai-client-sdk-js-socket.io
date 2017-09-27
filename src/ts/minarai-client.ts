@@ -9,7 +9,7 @@ export interface MinaraiClientConstructorOptions {
   applicationId: string;
   clientId?: string;
   userId?: string;
-  deviseId?: string;
+  deviceId?: string;
   debug?: boolean;
   silent?: boolean;
 }
@@ -25,7 +25,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
   private applicationId: string;
   private clientId: string|number;
   private userId: string|number;
-  private deviseId: string|number;
+  private deviceId: string|number;
   private lang: string|number;
 
   constructor(opts: MinaraiClientConstructorOptions) {
@@ -39,7 +39,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     this.applicationId = opts.applicationId;
     this.clientId = opts.clientId;
     this.userId = opts.userId;
-    this.deviseId = opts.deviseId || `devise_id_${this.applicationId}_${new Date().getTime()}`;
+    this.deviceId = opts.deviceId || `devise_id_${this.applicationId}_${new Date().getTime()}`;
     this.lang = opts.lang || 'ja';
 
     logger.set({debug: opts.debug, silent: opts.silent});
@@ -54,7 +54,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
         applicationId: this.applicationId,
         clientId: this.clientId,
         userId: this.userId,
-        deviseId: this.deviseId,
+        deviceId: this.deviceId,
       });
     });
 
@@ -67,7 +67,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
       this.applicationId = data.applicationId;
       this.clientId = data.clientId;
       this.userId = data.userId;
-      this.deviseId = data.deviseId;
+      this.deviceId = data.deviceId;
 
       logger.obj('joined', data);
       this.emit('joined', data);
@@ -103,12 +103,12 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     options = Object.assign({}, { lang: 'ja-JP' }, options || {});
     const timestamp = new Date().getTime();
     const payload = {
-      id: `${this.applicationId}${this.clientId}${this.userId}${this.deviseId}-${timestamp}`,
+      id: `${this.applicationId}${this.clientId}${this.userId}${this.deviceId}-${timestamp}`,
       head: {
         applicationId: this.applicationId,
         clientId: this.clientId,
         userId: this.userId,
-        deviseId: this.deviseId,
+        deviceId: this.deviceId,
         lang: options.lang || 'ja-JP',
         timestampUnixTime: timestamp,
       },
@@ -126,12 +126,12 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     const message = { command: command, payload: payload };
     const timestamp = new Date().getTime();
     const payload = {
-      id: `${this.applicationId}${this.clientId}${this.userId}${this.deviseId}-${timestamp}-system`,
+      id: `${this.applicationId}${this.clientId}${this.userId}${this.deviceId}-${timestamp}-system`,
       head: {
         applicationId: this.applicationId,
         clientId: this.clientId,
         userId: this.userId,
-        deviseId: this.deviseId,
+        deviceId: this.deviceId,
       },
       body: { message: message },
     };
