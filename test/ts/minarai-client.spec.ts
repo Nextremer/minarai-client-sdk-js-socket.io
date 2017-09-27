@@ -20,7 +20,7 @@ const constructorOptions = {
   applicationId: 'app_id_test',
   clientId: 'client_id_test',
   userId: 'user_id_test',
-  deviseId: 'devise_id_test',
+  deviceId: 'devise_id_test',
   debug: false,
   silent: false,
 };
@@ -39,7 +39,7 @@ describe('MinaraiClient', () => {
         expect(cli.applicationId).to.equal(constructorOptions.applicationId);
         expect(cli.clientId).to.equal(constructorOptions.clientId);
         expect(cli.userId).to.equal(constructorOptions.userId);
-        expect(cli.deviseId).to.equal(constructorOptions.deviseId);
+        expect(cli.deviceId).to.equal(constructorOptions.deviceId);
       });
     });
 
@@ -50,7 +50,7 @@ describe('MinaraiClient', () => {
           ...constructorOptions,
           clientId: null,
           userId: null,
-          deviseId: null,
+          deviceId: null,
           debug: null,
           silent: null,
         });
@@ -58,8 +58,8 @@ describe('MinaraiClient', () => {
       it('expect to create instance', () => {
         expect(cli).to.exist;
       });
-      it('expect deviseId to be set automatically', () => {
-        expect(cli.deviseId).to.match(new RegExp(`devise_id_${constructorOptions.applicationId}_\\d+`));
+      it('expect deviceId to be set automatically', () => {
+        expect(cli.deviceId).to.match(new RegExp(`devise_id_${constructorOptions.applicationId}_\\d+`));
       });
     });
 
@@ -171,7 +171,7 @@ describe('MinaraiClient', () => {
         applicationId: constructorOptions.applicationId,
         clientId: constructorOptions.clientId,
         userId: constructorOptions.userId,
-        deviseId: constructorOptions.deviseId,
+        deviceId: constructorOptions.deviceId,
       };
       beforeEach(() => {
         cli.socket.emit('joined', data);

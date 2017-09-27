@@ -88,7 +88,7 @@ var MinaraiClient = (function (_super) {
         this.applicationId = opts.applicationId;
         this.clientId = opts.clientId;
         this.userId = opts.userId;
-        this.deviseId = opts.deviseId || "devise_id_" + this.applicationId + "_" + new Date().getTime();
+        this.deviceId = opts.deviceId || "devise_id_" + this.applicationId + "_" + new Date().getTime();
         this.lang = opts.lang || 'ja';
         logger.set({ debug: opts.debug, silent: opts.silent });
     }
@@ -101,7 +101,7 @@ var MinaraiClient = (function (_super) {
                 applicationId: _this.applicationId,
                 clientId: _this.clientId,
                 userId: _this.userId,
-                deviseId: _this.deviseId,
+                deviceId: _this.deviceId,
             });
         });
         this.socket.on('disconnect', function () {
@@ -112,7 +112,7 @@ var MinaraiClient = (function (_super) {
             _this.applicationId = data.applicationId;
             _this.clientId = data.clientId;
             _this.userId = data.userId;
-            _this.deviseId = data.deviseId;
+            _this.deviceId = data.deviceId;
             logger.obj('joined', data);
             _this.emit('joined', data);
         });
@@ -141,12 +141,12 @@ var MinaraiClient = (function (_super) {
         options = Object.assign({}, { lang: 'ja-JP' }, options || {});
         var timestamp = new Date().getTime();
         var payload = {
-            id: "" + this.applicationId + this.clientId + this.userId + this.deviseId + "-" + timestamp,
+            id: "" + this.applicationId + this.clientId + this.userId + this.deviceId + "-" + timestamp,
             head: {
                 applicationId: this.applicationId,
                 clientId: this.clientId,
                 userId: this.userId,
-                deviseId: this.deviseId,
+                deviceId: this.deviceId,
                 lang: options.lang || 'ja-JP',
                 timestampUnixTime: timestamp,
             },
@@ -163,12 +163,12 @@ var MinaraiClient = (function (_super) {
         var message = { command: command, payload: payload };
         var timestamp = new Date().getTime();
         var payload = {
-            id: "" + this.applicationId + this.clientId + this.userId + this.deviseId + "-" + timestamp + "-system",
+            id: "" + this.applicationId + this.clientId + this.userId + this.deviceId + "-" + timestamp + "-system",
             head: {
                 applicationId: this.applicationId,
                 clientId: this.clientId,
                 userId: this.userId,
-                deviseId: this.deviseId,
+                deviceId: this.deviceId,
             },
             body: { message: message },
         };
