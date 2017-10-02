@@ -83,6 +83,11 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
       this.emit('sync-system-command', data);
     });
 
+    this.socket.on('sync-command', (data:any) => {
+      logger.obj('sync-command', data);
+      this.emit('sync-command', data);
+    });
+
     this.socket.on('message', (data:any) => {
       logger.obj('message', data);
       this.emit('message', data);
@@ -123,6 +128,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
   }
 
   public sendSystemCommand(command, payload) {
+    logger.warn('This method (sendSystemCommand) is deprecated. Please use "sendCommand" instead.');
     const message = { command: command, payload: payload };
     const timestamp = new Date().getTime();
     const payload = {
@@ -137,6 +143,22 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     };
     logger.obj('send-system-command', payload);
     this.socket.emit('system-command', payload);
+  }
+
+  public sendCommand(name, extra) {
+    const timestamp = new Date().getTime();
+    const payload = {
+      id: `${this.applicationId}${this.clientId}${this.userId}${this.deviceId}-${timestamp}-command`,
+      head: {
+        applicationId: this.applicationId,
+        clientId: this.clientId,
+        userId: this.userId,
+        deviceId: this.deviceId,
+      },
+      body: { name, extra },
+    };
+    logger.obj('send-command', payload);
+    this.socket.emit('command', payload);
   }
 
   public forceDisconnect() {
