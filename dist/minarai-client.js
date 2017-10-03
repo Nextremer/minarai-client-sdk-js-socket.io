@@ -140,6 +140,10 @@ var MinaraiClient = (function (_super) {
             logger.obj('system-message', data);
             _this.emit('system-message', data);
         });
+        this.socket.on('logs', function (data) {
+            logger.obj('logs', data);
+            _this.emit('logs', data);
+        });
     };
     MinaraiClient.prototype.send = function (uttr, options) {
         options = Object.assign({}, { lang: 'ja-JP' }, options || {});
@@ -194,6 +198,23 @@ var MinaraiClient = (function (_super) {
         };
         logger.obj('send-command', payload);
         this.socket.emit('command', payload);
+    };
+    MinaraiClient.prototype.getLogs = function (options) {
+        if (options === void 0) { options = {}; }
+        var timestamp = new Date().getTime();
+        var payload = {
+            id: "" + this.applicationId + this.clientId + this.userId + this.deviceId + "-" + timestamp + "-logs",
+            head: {
+                applicationId: this.applicationId,
+                clientId: this.clientId,
+                userId: this.userId,
+                deviceId: this.deviceId,
+                timestampUnixTime: timestamp,
+            },
+            body: options,
+        };
+        logger.obj('logs', payload);
+        this.socket.emit('logs', payload);
     };
     MinaraiClient.prototype.forceDisconnect = function () {
         logger.obj('force-disconnect');
