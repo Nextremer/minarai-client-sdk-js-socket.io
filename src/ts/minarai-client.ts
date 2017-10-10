@@ -20,6 +20,11 @@ export interface SendOptions {
   extra?: string;
 }
 
+export interface IGetLogsOptions {
+  ltDate?: string;
+  limit?: number;
+}
+
 export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
   private socket: any;
   private applicationId: string;
@@ -102,6 +107,11 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
       logger.obj('system-message', data);
       this.emit('system-message', data);
     });
+
+    this.socket.on('logs', (data: any) => {
+      logger.obj('logs', data);
+      this.emit('logs', data);
+    });
   }
 
   public send(uttr, options?: SendOptions) {
@@ -159,6 +169,23 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     };
     logger.obj('send-command', payload);
     this.socket.emit('command', payload);
+  }
+
+  public getLogs(options: IGetLogsOptions = {}) {
+    const timestamp = new Date().getTime();
+    const payload = {
+      id: `${this.applicationId}${this.clientId}${this.userId}${this.deviceId}-${timestamp}-logs`,
+      head: {
+        applicationId: this.applicationId,
+        clientId: this.clientId,
+        userId: this.userId,
+        deviceId: this.deviceId,
+        timestampUnixTime: timestamp,
+      },
+      body: options,
+    };
+    logger.obj('logs', payload);
+    this.socket.emit('logs', payload);
   }
 
   public forceDisconnect() {
