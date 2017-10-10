@@ -124,6 +124,10 @@ var MinaraiClient = (function (_super) {
             logger.obj('sync-system-command', data);
             _this.emit('sync-system-command', data);
         });
+        this.socket.on('sync-command', function (data) {
+            logger.obj('sync-command', data);
+            _this.emit('sync-command', data);
+        });
         this.socket.on('message', function (data) {
             logger.obj('message', data);
             _this.emit('message', data);
@@ -160,6 +164,7 @@ var MinaraiClient = (function (_super) {
         this.socket.emit('message', payload);
     };
     MinaraiClient.prototype.sendSystemCommand = function (command, payload) {
+        logger.warn('This method (sendSystemCommand) is deprecated. Please use "sendCommand" instead.');
         var message = { command: command, payload: payload };
         var timestamp = new Date().getTime();
         var payload = {
@@ -174,6 +179,21 @@ var MinaraiClient = (function (_super) {
         };
         logger.obj('send-system-command', payload);
         this.socket.emit('system-command', payload);
+    };
+    MinaraiClient.prototype.sendCommand = function (name, extra) {
+        var timestamp = new Date().getTime();
+        var payload = {
+            id: "" + this.applicationId + this.clientId + this.userId + this.deviceId + "-" + timestamp + "-command",
+            head: {
+                applicationId: this.applicationId,
+                clientId: this.clientId,
+                userId: this.userId,
+                deviceId: this.deviceId,
+            },
+            body: { name, extra },
+        };
+        logger.obj('send-command', payload);
+        this.socket.emit('command', payload);
     };
     MinaraiClient.prototype.forceDisconnect = function () {
         logger.obj('force-disconnect');
