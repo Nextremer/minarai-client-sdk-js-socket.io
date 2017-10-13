@@ -1,5 +1,6 @@
 const EventEmitter2 = require('eventemitter2');
 const axios = require('axios');
+const querystring = require('querystring');
 import logger from './logger';
 
 export interface MinaraiClientConstructorOptions {
@@ -43,7 +44,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     this.userId = opts.userId;
     this.deviceId = opts.deviceId || `devise_id_${this.applicationId}_${new Date().getTime()}`;
     this.lang = opts.lang || 'ja';
-    this.imageUrl = `${opts.socketIORootURL}upload-image`;
+    this.imageUrl = `${opts.imageUrl.replace(/\/$/, '')}/upload-image`;
 
     logger.set({debug: opts.debug, silent: opts.silent});
   }
@@ -161,7 +162,19 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
 
     return axios.post(this.imageUrl, form)
       .then((res) => {
-        return { ok: true, [res.data.message === "ok" ? "result" : "error"]: res.data };
+        let {url} = res.data;
+
+        if (!url) {
+          return { "error": "url dose not exist" };
+        }
+
+        const query = querystring.stringify({
+          applicationId: this.applicationId,
+          userId: this.userId
+        });
+        url += `?${query}`;
+
+        return { ok: true, [res.data.message === "ok" ? "result" : "error"]: { url } };
       })
       .catch((err) => {
         return { err };
