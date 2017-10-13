@@ -11,10 +11,12 @@
     "build": "`npm bin`/rollup -c"
   },
   "dependencies": {
+    "axios": "^0.16.2",
     "eventemitter2": "^4.1.0",
     "typescript": "^2.3.4"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/chai": "^4.0.1",
     "@types/eventemitter2": "^2.2.1",
     "@types/mocha": "^2.2.41",

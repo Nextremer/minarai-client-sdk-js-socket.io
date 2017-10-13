@@ -77,6 +77,8 @@ var Logger = (function () {
 var logger = new Logger();
 
 var EventEmitter2 = require('eventemitter2');
+var axios = require('axios');
+var querystring = require('querystring');
 var MinaraiClient = (function (_super) {
     __extends(MinaraiClient, _super);
     function MinaraiClient(opts) {
@@ -90,6 +92,7 @@ var MinaraiClient = (function (_super) {
         this.userId = opts.userId;
         this.deviceId = opts.deviceId || "devise_id_" + this.applicationId + "_" + new Date().getTime();
         this.lang = opts.lang || 'ja';
+        this.imageUrl = opts.imageUrl.replace(/\/$/, '') + "/upload-image";
         logger.set({ debug: opts.debug, silent: opts.silent });
     }
     MinaraiClient.prototype.init = function () {
@@ -219,6 +222,35 @@ var MinaraiClient = (function (_super) {
     MinaraiClient.prototype.forceDisconnect = function () {
         logger.obj('force-disconnect');
         this.socket.emit('force-disconnect');
+    };
+    MinaraiClient.prototype.uploadImage = function (file, opts) {
+        var _this = this;
+        var form = new FormData();
+        form.append("applicationId", this.applicationId);
+        form.append("clientId", this.clientId);
+        form.append("userId", this.userId);
+        form.append("deviceId", this.deviceId);
+        form.append('file', file, file.name);
+        if (opts && opts.extra) {
+            form.append("params", JSON.stringify(opts.extra));
+        }
+        return axios.post(this.imageUrl, form)
+            .then(function (res) {
+            var url = res.data.url;
+            if (!url) {
+                return { "error": "url dose not exist" };
+            }
+            var query = querystring.stringify({
+                applicationId: _this.applicationId,
+                userId: _this.userId
+            });
+            url += "?" + query;
+            return (_a = { ok: true }, _a[res.data.message === "ok" ? "result" : "error"] = { url }, _a);
+            var _a;
+        })
+            .catch(function (err) {
+            return { err };
+        });
     };
     return MinaraiClient;
 }(EventEmitter2.EventEmitter2));

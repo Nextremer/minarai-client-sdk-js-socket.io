@@ -1,4 +1,6 @@
 const EventEmitter2 = require('eventemitter2');
+const axios = require('axios');
+const querystring = require('querystring');
 import logger from './logger';
 
 export interface MinaraiClientConstructorOptions {
@@ -6,6 +8,7 @@ export interface MinaraiClientConstructorOptions {
   lang: string;
   socketIORootURL: string;
   socketIOOptions: any;
+  imageUrl: string;
   applicationId: string;
   clientId?: string;
   userId?: string;
@@ -46,6 +49,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     this.userId = opts.userId;
     this.deviceId = opts.deviceId || `devise_id_${this.applicationId}_${new Date().getTime()}`;
     this.lang = opts.lang || 'ja';
+    this.imageUrl = `${opts.imageUrl.replace(/\/$/, '')}/upload-image`;
 
     logger.set({debug: opts.debug, silent: opts.silent});
   }
@@ -191,6 +195,39 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
   public forceDisconnect() {
     logger.obj('force-disconnect');
     this.socket.emit('force-disconnect');
+  }
+
+  public uploadImage(file: File, opts?: SendOptions) {
+    const form = new FormData();
+    form.append("applicationId", this.applicationId);
+    form.append("clientId", this.clientId);
+    form.append("userId", this.userId);
+    form.append("deviceId", this.deviceId);
+    form.append( 'file', file, file.name );
+
+    if (opts && opts.extra) {
+      form.append("params", JSON.stringify(opts.extra));
+    }
+
+    return axios.post(this.imageUrl, form)
+      .then((res) => {
+        let {url} = res.data;
+
+        if (!url) {
+          return { "error": "url dose not exist" };
+        }
+
+        const query = querystring.stringify({
+          applicationId: this.applicationId,
+          userId: this.userId
+        });
+        url += `?${query}`;
+
+        return { ok: true, [res.data.message === "ok" ? "result" : "error"]: { url } };
+      })
+      .catch((err) => {
+        return { err };
+      })
   }
 }
 
