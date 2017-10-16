@@ -49,7 +49,10 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     this.userId = opts.userId;
     this.deviceId = opts.deviceId || `devise_id_${this.applicationId}_${new Date().getTime()}`;
     this.lang = opts.lang || 'ja';
-    this.imageUrl = `${opts.imageUrl.replace(/\/$/, '')}/upload-image`;
+
+    if (opts.imageUrl) {
+      this.imageUrl = `${opts.imageUrl.replace(/\/$/, '')}/upload-image`;
+    }
 
     logger.set({debug: opts.debug, silent: opts.silent});
   }
@@ -198,6 +201,10 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
   }
 
   public uploadImage(file: File, opts?: SendOptions) {
+    if (!this.imageUrl) {
+      throw new TypeError("`imageUrl` is needed to upload image.");
+    }
+
     const form = new FormData();
     form.append("applicationId", this.applicationId);
     form.append("clientId", this.clientId);
