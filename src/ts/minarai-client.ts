@@ -3,12 +3,15 @@ const axios = require('axios');
 const querystring = require('querystring');
 import logger from './logger';
 
+const CONNECTOR_URL = "https://socketio-connector.minarai.cloud";
+const DEFAULT_API_VERSION = "v1";
+
 export interface MinaraiClientConstructorOptions {
   io: any;
   lang: string;
   socketIORootURL: string;
+  apiVersion: string;
   socketIOOptions: any;
-  imageUrl: string;
   applicationId: string;
   clientId?: string;
   userId?: string;
@@ -39,20 +42,25 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
   constructor(opts: MinaraiClientConstructorOptions) {
     super();
 
-    if (!opts.io || !opts.socketIORootURL || !opts.applicationId) {
-      throw new InvalidArgumentError("opts must contain io, socketIORootURL, and applicationId");
+    if (!opts.io || !opts.applicationId) {
+      throw new InvalidArgumentError("opts must contain io and applicationId");
     }
 
-    this.socket = opts.io.connect(opts.socketIORootURL, opts.socketIOOptions);
+    const socketIORootURL = opts.socketIORootURL || CONNECTOR_URL;
+    const apiVersion = opts.apiVersion || DEFAULT_API_VERSION;
+    const socketIOOptions = { path: `/socket.io/${apiVersion}` };
+    if (opts.socketIOOptions 
+        && Object.prototype.toString.call(opts.socketIOOptions) === "[object Object]") {
+      Object.assign(socketIOOptions, opts.socketIOOptions);
+    }
+
+    this.socket = opts.io.connect(socketIORootURL, socketIOOptions);
     this.applicationId = opts.applicationId;
     this.clientId = opts.clientId;
     this.userId = opts.userId;
     this.deviceId = opts.deviceId || `devise_id_${this.applicationId}_${new Date().getTime()}`;
     this.lang = opts.lang || 'ja';
-
-    if (opts.imageUrl) {
-      this.imageUrl = `${opts.imageUrl.replace(/\/$/, '')}/upload-image`;
-    }
+    this.imageUrl = `${socketIORootURL.replace(/\/$/, '')}/${apiVersion}/upload-image`;
 
     logger.set({debug: opts.debug, silent: opts.silent});
   }

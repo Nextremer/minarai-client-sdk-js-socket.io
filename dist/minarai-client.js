@@ -79,22 +79,29 @@ var logger = new Logger();
 var EventEmitter2 = require('eventemitter2');
 var axios = require('axios');
 var querystring = require('querystring');
+var CONNECTOR_URL = "https://socketio-connector.minarai.cloud";
+var DEFAULT_API_VERSION = "v1";
 var MinaraiClient = (function (_super) {
     __extends(MinaraiClient, _super);
     function MinaraiClient(opts) {
         _super.call(this);
-        if (!opts.io || !opts.socketIORootURL || !opts.applicationId) {
-            throw new InvalidArgumentError("opts must contain io, socketIORootURL, and applicationId");
+        if (!opts.io || !opts.applicationId) {
+            throw new InvalidArgumentError("opts must contain io and applicationId");
         }
-        this.socket = opts.io.connect(opts.socketIORootURL, opts.socketIOOptions);
+        var socketIORootURL = opts.socketIORootURL || CONNECTOR_URL;
+        var apiVersion = opts.apiVersion || DEFAULT_API_VERSION;
+        var socketIOOptions = { path: "/socket.io/" + apiVersion };
+        if (opts.socketIOOptions
+            && Object.prototype.toString.call(opts.socketIOOptions) === "[object Object]") {
+            Object.assign(socketIOOptions, opts.socketIOOptions);
+        }
+        this.socket = opts.io.connect(socketIORootURL, socketIOOptions);
         this.applicationId = opts.applicationId;
         this.clientId = opts.clientId;
         this.userId = opts.userId;
         this.deviceId = opts.deviceId || "devise_id_" + this.applicationId + "_" + new Date().getTime();
         this.lang = opts.lang || 'ja';
-        if (opts.imageUrl) {
-            this.imageUrl = opts.imageUrl.replace(/\/$/, '') + "/upload-image";
-        }
+        this.imageUrl = socketIORootURL.replace(/\/$/, '') + "/" + apiVersion + "/upload-image";
         logger.set({ debug: opts.debug, silent: opts.silent });
     }
     MinaraiClient.prototype.init = function () {
