@@ -102,6 +102,7 @@ var MinaraiClient = (function (_super) {
         this.deviceId = opts.deviceId || "devise_id_" + this.applicationId + "_" + new Date().getTime();
         this.lang = opts.lang || 'ja';
         this.imageUrl = socketIORootURL.replace(/\/$/, '') + "/" + apiVersion + "/upload-image";
+        this.getImageByHeader = opts.getImageByHeader;
         logger.set({ debug: opts.debug, silent: opts.silent });
     }
     MinaraiClient.prototype.init = function () {
@@ -129,8 +130,20 @@ var MinaraiClient = (function (_super) {
             _this.emit('joined', data);
         });
         this.socket.on('sync', function (data) {
-            logger.obj('sync', data);
-            _this.emit('sync', data);
+            if (data && data.body && data.body.type === "image"
+                && data.body.message && data.body.message[0]
+                && data.body.message[0].imageUrl) {
+                _this.getImageUrl(data.body.message[0].imageUrl, data.body.message[0].imageType)
+                    .then(function (url) {
+                    data.body.message[0].url = url;
+                    logger.obj('sync', data);
+                    _this.emit('sync', data);
+                });
+            }
+            else {
+                logger.obj('sync', data);
+                _this.emit('sync', data);
+            }
         });
         this.socket.on('sync-system-command', function (data) {
             logger.obj('sync-system-command', data);
@@ -141,8 +154,20 @@ var MinaraiClient = (function (_super) {
             _this.emit('sync-command', data);
         });
         this.socket.on('message', function (data) {
-            logger.obj('message', data);
-            _this.emit('message', data);
+            if (data && data.body && data.body.type === "image"
+                && data.body.messages && data.body.messages[0]
+                && data.body.messages[0].imageUrl) {
+                _this.getImageUrl(data.body.messages[0].imageUrl, data.body.messages[0].imageType)
+                    .then(function (url) {
+                    data.body.messages[0].url = url;
+                    logger.obj('message', data);
+                    _this.emit('message', data);
+                });
+            }
+            else {
+                logger.obj('message', data);
+                _this.emit('message', data);
+            }
         });
         this.socket.on('operator-command', function (data) {
             logger.obj('operator-command', data);
@@ -233,7 +258,6 @@ var MinaraiClient = (function (_super) {
         this.socket.emit('force-disconnect');
     };
     MinaraiClient.prototype.uploadImage = function (file, opts) {
-        var _this = this;
         if (!this.imageUrl) {
             throw new TypeError("`imageUrl` is needed to upload image.");
         }
@@ -252,17 +276,33 @@ var MinaraiClient = (function (_super) {
             if (!url) {
                 return { "error": "url dose not exist" };
             }
-            var query = querystring.stringify({
-                applicationId: _this.applicationId,
-                userId: _this.userId
-            });
-            url += "?" + query;
             return (_a = { ok: true }, _a[res.data.message === "ok" ? "result" : "error"] = { url }, _a);
             var _a;
         })
             .catch(function (err) {
             return { err };
         });
+    };
+    MinaraiClient.prototype.getImageUrl = function (url, type) {
+        if (this.getImageByHeader) {
+            return axios.get(url, {
+                headers: {
+                    'X-Minarai-Application-Id': this.applicationId,
+                    'X-Minarai-User-Id': this.userId
+                },
+                responseType: 'arraybuffer'
+            })
+                .then(function (response) {
+                return "data:" + type + ";base64," + new Buffer(response.data, 'binary').toString('base64');
+            });
+        }
+        else {
+            var query = querystring.stringify({
+                applicationId: this.applicationId,
+                userId: this.userId
+            });
+            return Promise.resolve(url + ("?" + query));
+        }
     };
     return MinaraiClient;
 }(EventEmitter2.EventEmitter2));

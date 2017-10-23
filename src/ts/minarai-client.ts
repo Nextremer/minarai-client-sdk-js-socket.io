@@ -18,6 +18,7 @@ export interface MinaraiClientConstructorOptions {
   deviceId?: string;
   debug?: boolean;
   silent?: boolean;
+  getImageByHeader: boolean;
 }
 
 export interface SendOptions {
@@ -61,6 +62,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     this.deviceId = opts.deviceId || `devise_id_${this.applicationId}_${new Date().getTime()}`;
     this.lang = opts.lang || 'ja';
     this.imageUrl = `${socketIORootURL.replace(/\/$/, '')}/${apiVersion}/upload-image`;
+    this.getImageByHeader = opts.getImageByHeader;
 
     logger.set({debug: opts.debug, silent: opts.silent});
   }
@@ -94,8 +96,19 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     });
 
     this.socket.on('sync', (data:any) => {
-      logger.obj('sync', data);
-      this.emit('sync', data);
+      if (data && data.body && data.body.type === "image"
+          && data.body.message && data.body.message[0]
+          && data.body.message[0].imageUrl) {
+        this.getImageUrl(data.body.message[0].imageUrl, data.body.message[0].imageType)
+        .then((url) => {
+          data.body.message[0].url = url;
+          logger.obj('sync', data);
+          this.emit('sync', data);
+        });
+      } else {
+        logger.obj('sync', data);
+        this.emit('sync', data);
+      }
     });
 
     this.socket.on('sync-system-command', (data:any) => {
@@ -109,8 +122,19 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     });
 
     this.socket.on('message', (data:any) => {
-      logger.obj('message', data);
-      this.emit('message', data);
+      if (data && data.body && data.body.type === "image"
+          && data.body.messages && data.body.messages[0]
+          && data.body.messages[0].imageUrl) {
+        this.getImageUrl(data.body.messages[0].imageUrl, data.body.messages[0].imageType)
+        .then((url) => {
+          data.body.messages[0].url = url;
+          logger.obj('message', data);
+          this.emit('message', data);
+        });
+      } else {
+        logger.obj('message', data);
+        this.emit('message', data);
+      }
     });
 
     this.socket.on('operator-command', (data:any) => {
@@ -232,17 +256,32 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
           return { "error": "url dose not exist" };
         }
 
-        const query = querystring.stringify({
-          applicationId: this.applicationId,
-          userId: this.userId
-        });
-        url += `?${query}`;
-
         return { ok: true, [res.data.message === "ok" ? "result" : "error"]: { url } };
       })
       .catch((err) => {
         return { err };
       })
+  }
+
+  public getImageUrl(url: string, type: string) {
+    if (this.getImageByHeader) {
+      return axios.get(url, {
+        headers: {
+          'X-Minarai-Application-Id': this.applicationId,
+          'X-Minarai-User-Id': this.userId
+        },
+        responseType: 'arraybuffer'
+      })
+      .then((response) => {
+        return `data:${type};base64,${new Buffer(response.data, 'binary').toString('base64')}`;
+      });
+    } else {
+      const query = querystring.stringify({
+        applicationId: this.applicationId,
+        userId: this.userId
+      });
+      return Promise.resolve(url + `?${query}`);
+    }
   }
 }
 
