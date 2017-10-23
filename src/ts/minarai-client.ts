@@ -86,6 +86,11 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     });
 
     this.socket.on('sync', (data:any) => {
+      if (data && data.body && data.body.type === "image"
+          && data.body.message && data.body.message[0]
+          && data.body.message[0].imageUrl) {
+        data.body.message[0].url = this.getImageUrl(data.body.message[0].imageUrl);
+      }
       logger.obj('sync', data);
       this.emit('sync', data);
     });
@@ -224,17 +229,19 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
           return { "error": "url dose not exist" };
         }
 
-        const query = querystring.stringify({
-          applicationId: this.applicationId,
-          userId: this.userId
-        });
-        url += `?${query}`;
-
         return { ok: true, [res.data.message === "ok" ? "result" : "error"]: { url } };
       })
       .catch((err) => {
         return { err };
       })
+  }
+
+  public getImageUrl(url: string) {
+    const query = querystring.stringify({
+      applicationId: this.applicationId,
+      userId: this.userId
+    });
+    return url + `?${query}`;
   }
 }
 

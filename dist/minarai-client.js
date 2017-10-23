@@ -122,6 +122,11 @@ var MinaraiClient = (function (_super) {
             _this.emit('joined', data);
         });
         this.socket.on('sync', function (data) {
+            if (data && data.body && data.body.type === "image"
+                && data.body.message && data.body.message[0]
+                && data.body.message[0].imageUrl) {
+                data.body.message[0].url = _this.getImageUrl(data.body.message[0].imageUrl);
+            }
             logger.obj('sync', data);
             _this.emit('sync', data);
         });
@@ -226,7 +231,6 @@ var MinaraiClient = (function (_super) {
         this.socket.emit('force-disconnect');
     };
     MinaraiClient.prototype.uploadImage = function (file, opts) {
-        var _this = this;
         if (!this.imageUrl) {
             throw new TypeError("`imageUrl` is needed to upload image.");
         }
@@ -245,17 +249,19 @@ var MinaraiClient = (function (_super) {
             if (!url) {
                 return { "error": "url dose not exist" };
             }
-            var query = querystring.stringify({
-                applicationId: _this.applicationId,
-                userId: _this.userId
-            });
-            url += "?" + query;
             return (_a = { ok: true }, _a[res.data.message === "ok" ? "result" : "error"] = { url }, _a);
             var _a;
         })
             .catch(function (err) {
             return { err };
         });
+    };
+    MinaraiClient.prototype.getImageUrl = function (url) {
+        var query = querystring.stringify({
+            applicationId: this.applicationId,
+            userId: this.userId
+        });
+        return url + ("?" + query);
     };
     return MinaraiClient;
 }(EventEmitter2.EventEmitter2));
