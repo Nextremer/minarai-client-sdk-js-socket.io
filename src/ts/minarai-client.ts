@@ -106,6 +106,11 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     });
 
     this.socket.on('message', (data:any) => {
+      if (data && data.body && data.body.type === "image"
+          && data.body.messages && data.body.messages[0]
+          && data.body.messages[0].imageUrl) {
+        data.body.messages[0].url = this.getImageUrl(data.body.messages[0].imageUrl);
+      }
       logger.obj('message', data);
       this.emit('message', data);
     });
