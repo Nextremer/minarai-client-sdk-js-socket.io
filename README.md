@@ -27,6 +27,7 @@ const minaraiClient = new MinaraiClient({
   socketIORootURL: 'http://localhost:3000/', /* minarai Socket.IO Connector URL */
   socketIOOptions: {}, /* options for io.connect method */
   applicationId: this.state.connectionInfo.applicationId, /* application's id you want to connect */
+  applicationSecret : this.state.connectionInfo.applicationSecret,
   clientId: this.state.connectionInfo.clientId,
   userId: this.state.connectionInfo.userId,
   deviceId: this.state.connectionInfo.deviceId,
@@ -63,6 +64,7 @@ setInterval( function(){
  * socketIORootURL: root url of minarai Socket.IO Connector
  * socketIOOptions: options for io.connect method (ex) {}
  * applicationId: application id to connect
+ * applicationSecret: application secret to connect
  * clientId: clientId
  * userId: userId
  * deviceId: deviceId
