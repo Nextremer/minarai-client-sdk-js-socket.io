@@ -88,6 +88,9 @@ var MinaraiClient = (function (_super) {
         if (!opts.io || !opts.applicationId) {
             throw new InvalidArgumentError("opts must contain io and applicationId");
         }
+        if (!opts.applicationSecret) {
+            throw new InvalidArgumentError("opts must contain io and applicationSecret");
+        }
         var socketIORootURL = opts.socketIORootURL || CONNECTOR_URL;
         var apiVersion = opts.apiVersion || DEFAULT_API_VERSION;
         var socketIOOptions = { path: "/socket.io/" + apiVersion };
@@ -97,6 +100,7 @@ var MinaraiClient = (function (_super) {
         }
         this.socket = opts.io.connect(socketIORootURL, socketIOOptions);
         this.applicationId = opts.applicationId;
+        this.applicationSecret = opts.applicationSecret;
         this.clientId = opts.clientId;
         this.userId = opts.userId;
         this.deviceId = opts.deviceId || "devise_id_" + this.applicationId + "_" + new Date().getTime();
@@ -112,6 +116,7 @@ var MinaraiClient = (function (_super) {
             _this.emit('connect');
             _this.socket.emit('join-as-client', {
                 applicationId: _this.applicationId,
+                applicationSecret: _this.applicationSecret,
                 clientId: _this.clientId,
                 userId: _this.userId,
                 deviceId: _this.deviceId,
@@ -123,6 +128,7 @@ var MinaraiClient = (function (_super) {
         });
         this.socket.on('joined', function (data) {
             _this.applicationId = data.applicationId;
+            _this.applicationSecret = data.applicationSecret;
             _this.clientId = data.clientId;
             _this.userId = data.userId;
             _this.deviceId = data.deviceId;
@@ -189,6 +195,7 @@ var MinaraiClient = (function (_super) {
             id: "" + this.applicationId + this.clientId + this.userId + this.deviceId + "-" + timestamp,
             head: {
                 applicationId: this.applicationId,
+                applicationSecret: this.applicationSecret,
                 clientId: this.clientId,
                 userId: this.userId,
                 deviceId: this.deviceId,
@@ -212,6 +219,7 @@ var MinaraiClient = (function (_super) {
             id: "" + this.applicationId + this.clientId + this.userId + this.deviceId + "-" + timestamp + "-system",
             head: {
                 applicationId: this.applicationId,
+                applicationSecret: this.applicationSecret,
                 clientId: this.clientId,
                 userId: this.userId,
                 deviceId: this.deviceId,
@@ -227,6 +235,7 @@ var MinaraiClient = (function (_super) {
             id: "" + this.applicationId + this.clientId + this.userId + this.deviceId + "-" + timestamp + "-command",
             head: {
                 applicationId: this.applicationId,
+                applicationSecret: this.applicationSecret,
                 clientId: this.clientId,
                 userId: this.userId,
                 deviceId: this.deviceId,
@@ -243,6 +252,7 @@ var MinaraiClient = (function (_super) {
             id: "" + this.applicationId + this.clientId + this.userId + this.deviceId + "-" + timestamp + "-logs",
             head: {
                 applicationId: this.applicationId,
+                applicationSecret: this.applicationSecret,
                 clientId: this.clientId,
                 userId: this.userId,
                 deviceId: this.deviceId,
@@ -288,6 +298,7 @@ var MinaraiClient = (function (_super) {
             return axios.get(url, {
                 headers: {
                     'X-Minarai-Application-Id': this.applicationId,
+                    'X-Minarai-Application-Secret': this.applicationSecret,
                     'X-Minarai-User-Id': this.userId
                 },
                 responseType: 'arraybuffer'
