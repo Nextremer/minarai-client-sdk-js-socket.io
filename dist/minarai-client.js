@@ -90,7 +90,10 @@ var MinaraiClient = (function (_super) {
         }
         var socketIORootURL = opts.socketIORootURL || CONNECTOR_URL;
         var apiVersion = opts.apiVersion || DEFAULT_API_VERSION;
-        var socketIOOptions = { path: "/socket.io/" + apiVersion };
+        var socketIOOptions = {
+            path: "/socket.io/" + apiVersion,
+            transports: ["websocket"]
+        };
         if (opts.socketIOOptions
             && Object.prototype.toString.call(opts.socketIOOptions) === "[object Object]") {
             Object.assign(socketIOOptions, opts.socketIOOptions);
@@ -100,7 +103,7 @@ var MinaraiClient = (function (_super) {
         this.clientId = opts.clientId;
         this.userId = opts.userId;
         this.deviceId = opts.deviceId || "devise_id_" + this.applicationId + "_" + new Date().getTime();
-        this.lang = opts.lang || 'ja';
+        this.lang = opts.lang || 'ja-JP';
         this.imageUrl = socketIORootURL.replace(/\/$/, '') + "/" + apiVersion + "/upload-image";
         this.getImageByHeader = opts.getImageByHeader;
         logger.set({ debug: opts.debug, silent: opts.silent });
