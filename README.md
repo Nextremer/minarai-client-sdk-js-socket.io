@@ -11,10 +11,15 @@ A SDK that enables you to connect minarai easily on Node.js, browser both.
 * [EventEmitter2](https://github.com/asyncly/EventEmitter2)
 
 ## Install
-on your project root
-`npm install -S Nextremer/minarai-client-sdk-js-socket.io`
-or
-`yarn add Nextremer/minarai-client-sdk-js-socket.io`
+Using npm:
+```sh
+npm install -S minarai-client-sdk-js-socket.io
+```
+
+Using yarn:
+```sh
+yarn add minarai-client-sdk-js-socket.io
+```
 
 ## Usage
 ```js
@@ -23,9 +28,6 @@ import MinaraiClient from 'minarai-client-sdk-js-socket-io';
 
 const minaraiClient = new MinaraiClient({
   io: io, /* Socket.io object */
-  lang: 'ja-JP',
-  socketIORootURL: 'http://localhost:3000/', /* minarai Socket.IO Connector URL */
-  socketIOOptions: {}, /* options for io.connect method */
   applicationId: this.state.connectionInfo.applicationId, /* application's id you want to connect */
   clientId: this.state.connectionInfo.clientId,
   userId: this.state.connectionInfo.userId,
@@ -59,9 +61,10 @@ setInterval( function(){
 ## references
 ### constructor options
  * io: socket.io object
- * lang: language option( default: "ja-JP" )
- * socketIORootURL: root url of minarai Socket.IO Connector
+ * lang: language option ( default: "ja-JP" )
+ * socketIORootURL: root url of minarai Socket.IO Connector ( default: "https://socketio-connector.minarai.cloud" )
  * socketIOOptions: options for io.connect method (ex) {}
+ * apiVersion: api version of minarai Socket.IO Connector ( default: "v1" )
  * applicationId: application id to connect
  * clientId: clientId
  * userId: userId
@@ -93,6 +96,3 @@ cli.sendSystemCommand('happyEmotionDetected', { value: true });
  * **sync**: when you or your group send message to minarai(for sync message between multiple devices)
  * **sync-system-command**: when you or your group send system command to minarai(for sync system command between multiple devices)
  * **message**: when minarai send any event
-
-
-
