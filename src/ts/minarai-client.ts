@@ -6,6 +6,9 @@ import logger from './logger';
 const CONNECTOR_URL = "https://socketio-connector.minarai.cloud";
 const DEFAULT_API_VERSION = "v1";
 
+const yellow = '\u001b[33m';
+const reset = '\u001b[0m';
+
 export interface MinaraiClientConstructorOptions {
   io: any;
   lang: string;
@@ -50,7 +53,8 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     }
 
     if (!opts.applicationSecret) {
-        throw new InvalidArgumentError("opts must contain io and applicationSecret");
+        // throw new InvalidArgumentError("opts must contain io and applicationSecret");
+        console.warn(yellow + '[warn]You had better use applicationSecret' + reset);
     }
 
     const socketIORootURL = opts.socketIORootURL || CONNECTOR_URL;
@@ -59,7 +63,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
       path: `/socket.io/${apiVersion}`,
       transports: [ "websocket" ]
     };
-    if (opts.socketIOOptions 
+    if (opts.socketIOOptions
         && Object.prototype.toString.call(opts.socketIOOptions) === "[object Object]") {
       Object.assign(socketIOOptions, opts.socketIOOptions);
     }
