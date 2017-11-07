@@ -29,6 +29,7 @@ import MinaraiClient from 'minarai-client-sdk-js-socket-io';
 const minaraiClient = new MinaraiClient({
   io: io, /* Socket.io object */
   applicationId: this.state.connectionInfo.applicationId, /* application's id you want to connect */
+  applicationSecret : this.state.connectionInfo.applicationSecret,
   clientId: this.state.connectionInfo.clientId,
   userId: this.state.connectionInfo.userId,
   deviceId: this.state.connectionInfo.deviceId,
@@ -66,6 +67,7 @@ setInterval( function(){
  * socketIOOptions: options for io.connect method (ex) {}
  * apiVersion: api version of minarai Socket.IO Connector ( default: "v1" )
  * applicationId: application id to connect
+ * applicationSecret: application secret to connect
  * clientId: clientId
  * userId: userId
  * deviceId: deviceId

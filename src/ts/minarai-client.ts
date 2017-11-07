@@ -6,6 +6,9 @@ import logger from './logger';
 const CONNECTOR_URL = "https://socketio-connector.minarai.cloud";
 const DEFAULT_API_VERSION = "v1";
 
+const yellow = '\u001b[33m';
+const reset = '\u001b[0m';
+
 export interface MinaraiClientConstructorOptions {
   io: any;
   lang: string;
@@ -13,6 +16,7 @@ export interface MinaraiClientConstructorOptions {
   apiVersion: string;
   socketIOOptions: any;
   applicationId: string;
+  applicationSecret:string;
   clientId?: string;
   userId?: string;
   deviceId?: string;
@@ -35,6 +39,7 @@ export interface IGetLogsOptions {
 export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
   private socket: any;
   private applicationId: string;
+  private applicationSecret:string;
   private clientId: string|number;
   private userId: string|number;
   private deviceId: string|number;
@@ -47,19 +52,25 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
       throw new InvalidArgumentError("opts must contain io and applicationId");
     }
 
+    if (!opts.applicationSecret) {
+        // throw new InvalidArgumentError("opts must contain io and applicationSecret");
+        console.warn(yellow + '[warn]You had better use applicationSecret' + reset);
+    }
+
     const socketIORootURL = opts.socketIORootURL || CONNECTOR_URL;
     const apiVersion = opts.apiVersion || DEFAULT_API_VERSION;
     const socketIOOptions = {
       path: `/socket.io/${apiVersion}`,
       transports: [ "websocket" ]
     };
-    if (opts.socketIOOptions 
+    if (opts.socketIOOptions
         && Object.prototype.toString.call(opts.socketIOOptions) === "[object Object]") {
       Object.assign(socketIOOptions, opts.socketIOOptions);
     }
 
     this.socket = opts.io.connect(socketIORootURL, socketIOOptions);
     this.applicationId = opts.applicationId;
+    this.applicationSecret = opts.applicationSecret;
     this.clientId = opts.clientId;
     this.userId = opts.userId;
     this.deviceId = opts.deviceId || `devise_id_${this.applicationId}_${new Date().getTime()}`;
@@ -77,6 +88,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
 
       this.socket.emit('join-as-client', {
         applicationId: this.applicationId,
+        applicationSecret: this.applicationSecret,
         clientId: this.clientId,
         userId: this.userId,
         deviceId: this.deviceId,
@@ -90,6 +102,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
 
     this.socket.on('joined', (data: any) => {
       this.applicationId = data.applicationId;
+      this.applicationSecret = data.applicationSecret;
       this.clientId = data.clientId;
       this.userId = data.userId;
       this.deviceId = data.deviceId;
@@ -163,6 +176,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
       id: `${this.applicationId}${this.clientId}${this.userId}${this.deviceId}-${timestamp}`,
       head: {
         applicationId: this.applicationId,
+        applicationSecret: this.applicationSecret,
         clientId: this.clientId,
         userId: this.userId,
         deviceId: this.deviceId,
@@ -187,6 +201,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
       id: `${this.applicationId}${this.clientId}${this.userId}${this.deviceId}-${timestamp}-system`,
       head: {
         applicationId: this.applicationId,
+        applicationSecret: this.applicationSecret,
         clientId: this.clientId,
         userId: this.userId,
         deviceId: this.deviceId,
@@ -203,6 +218,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
       id: `${this.applicationId}${this.clientId}${this.userId}${this.deviceId}-${timestamp}-command`,
       head: {
         applicationId: this.applicationId,
+        applicationSecret: this.applicationSecret,
         clientId: this.clientId,
         userId: this.userId,
         deviceId: this.deviceId,
@@ -219,6 +235,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
       id: `${this.applicationId}${this.clientId}${this.userId}${this.deviceId}-${timestamp}-logs`,
       head: {
         applicationId: this.applicationId,
+        applicationSecret: this.applicationSecret,
         clientId: this.clientId,
         userId: this.userId,
         deviceId: this.deviceId,
@@ -271,6 +288,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
       return axios.get(url, {
         headers: {
           'X-Minarai-Application-Id': this.applicationId,
+          'X-Minarai-Application-Secret': this.applicationSecret,
           'X-Minarai-User-Id': this.userId
         },
         responseType: 'arraybuffer'

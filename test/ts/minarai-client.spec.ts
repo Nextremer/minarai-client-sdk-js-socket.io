@@ -18,6 +18,7 @@ const constructorOptions = {
   socketIORootURL: 'ws://localhost/ws',
   socketIOOptions: [],
   applicationId: 'app_id_test',
+  applicationSecret: 'app_secret_test',
   clientId: 'client_id_test',
   userId: 'user_id_test',
   deviceId: 'devise_id_test',
@@ -37,6 +38,7 @@ describe('MinaraiClient', () => {
       });
       it('expect to set ids', () => {
         expect(cli.applicationId).to.equal(constructorOptions.applicationId);
+        expect(cli.applicationSecret).to.equal(constructorOptions.applicationSecret);
         expect(cli.clientId).to.equal(constructorOptions.clientId);
         expect(cli.userId).to.equal(constructorOptions.userId);
         expect(cli.deviceId).to.equal(constructorOptions.deviceId);
@@ -75,6 +77,7 @@ describe('MinaraiClient', () => {
           new MinaraiClient({
             ...constructorOptions,
             socketIORootURL: null,
+            applicationSecret: null,
           })
         }).to.throw(MinaraiClient.InvalidArgumentError);
         expect(() => {
@@ -169,6 +172,7 @@ describe('MinaraiClient', () => {
     describe('on joined', () => {
       data = {
         applicationId: constructorOptions.applicationId,
+        applicationSecret: constructorOptions.applicationSecret,
         clientId: constructorOptions.clientId,
         userId: constructorOptions.userId,
         deviceId: constructorOptions.deviceId,
