@@ -55,8 +55,11 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
 
     const socketIORootURL = opts.socketIORootURL || CONNECTOR_URL;
     const apiVersion = opts.apiVersion || DEFAULT_API_VERSION;
-    const socketIOOptions = { path: `/socket.io/${apiVersion}` };
-    if (opts.socketIOOptions
+    const socketIOOptions = {
+      path: `/socket.io/${apiVersion}`,
+      transports: [ "websocket" ]
+    };
+    if (opts.socketIOOptions 
         && Object.prototype.toString.call(opts.socketIOOptions) === "[object Object]") {
       Object.assign(socketIOOptions, opts.socketIOOptions);
     }
@@ -67,7 +70,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     this.clientId = opts.clientId;
     this.userId = opts.userId;
     this.deviceId = opts.deviceId || `devise_id_${this.applicationId}_${new Date().getTime()}`;
-    this.lang = opts.lang || 'ja';
+    this.lang = opts.lang || 'ja-JP';
     this.imageUrl = `${socketIORootURL.replace(/\/$/, '')}/${apiVersion}/upload-image`;
     this.getImageByHeader = opts.getImageByHeader;
 
