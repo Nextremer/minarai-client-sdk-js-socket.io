@@ -21,7 +21,7 @@ const constructorOptions = {
   applicationSecret: 'app_secret_test',
   clientId: 'client_id_test',
   userId: 'user_id_test',
-  deviceId: 'devise_id_test',
+  deviceId: 'device_id_test',
   debug: false,
   silent: false,
 };
@@ -61,7 +61,7 @@ describe('MinaraiClient', () => {
         expect(cli).to.exist;
       });
       it('expect deviceId to be set automatically', () => {
-        expect(cli.deviceId).to.match(new RegExp(`devise_id_${constructorOptions.applicationId}_\\d+`));
+        expect(cli.deviceId).to.match(new RegExp(`device_id_${constructorOptions.applicationId}_\\d+`));
       });
     });
 
