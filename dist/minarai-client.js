@@ -143,11 +143,11 @@ var MinaraiClient = (function (_super) {
         });
         this.socket.on('sync', function (data) {
             if (data && data.body && data.body.type === "image"
-                && data.body.message && data.body.message[0]
-                && data.body.message[0].imageUrl) {
-                _this.getImageUrl(data.body.message[0].imageUrl, data.body.message[0].imageType)
+                && data.body.message && data.body.message
+                && data.body.message.imageUrl) {
+                _this.getImageUrl(data.body.message.imageUrl, data.body.message.imageType)
                     .then(function (url) {
-                    data.body.message[0].url = url;
+                    data.body.message.url = url;
                     logger.obj('sync', data);
                     _this.emit('sync', data);
                 });
