@@ -193,6 +193,10 @@ var MinaraiClient = (function (_super) {
             logger.obj('logs', data);
             _this.emit('logs', data);
         });
+        this.socket.on('minarai-error', function (data) {
+            logger.error(data);
+            _this.emit('error', data);
+        });
     };
     MinaraiClient.prototype.send = function (uttr, options) {
         options = Object.assign({}, { lang: 'ja-JP' }, options || {});
