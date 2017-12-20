@@ -283,6 +283,7 @@ var MinaraiClient = (function (_super) {
         }
         var form = new FormData();
         form.append("applicationId", this.applicationId);
+        form.append("applicationSecret", this.applicationSecret);
         form.append("clientId", this.clientId);
         form.append("userId", this.userId);
         form.append("deviceId", this.deviceId);
