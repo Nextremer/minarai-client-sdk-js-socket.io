@@ -305,6 +305,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     } else {
       const query = querystring.stringify({
         applicationId: this.applicationId,
+        applicationSecret: this.applicationSecret,
         userId: this.userId
       });
       return Promise.resolve(url + `?${query}`);

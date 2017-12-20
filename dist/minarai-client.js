@@ -321,6 +321,7 @@ var MinaraiClient = (function (_super) {
         else {
             var query = querystring.stringify({
                 applicationId: this.applicationId,
+                applicationSecret: this.applicationSecret,
                 userId: this.userId
             });
             return Promise.resolve(url + ("?" + query));
