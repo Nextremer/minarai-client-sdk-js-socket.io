@@ -264,6 +264,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
 
     const form = new FormData();
     form.append("applicationId", this.applicationId);
+    form.append("applicationSecret", this.applicationSecret);
     form.append("clientId", this.clientId);
     form.append("userId", this.userId);
     form.append("deviceId", this.deviceId);
@@ -304,6 +305,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     } else {
       const query = querystring.stringify({
         applicationId: this.applicationId,
+        applicationSecret: this.applicationSecret,
         userId: this.userId
       });
       return Promise.resolve(url + `?${query}`);
