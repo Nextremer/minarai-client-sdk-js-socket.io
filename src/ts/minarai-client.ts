@@ -228,7 +228,10 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
         userId: this.userId,
         deviceId: this.deviceId,
       },
-      body: { name, extra },
+      body: {
+        name:name,
+        extra:extra,
+      },
     };
     logger.obj('send-command', payload);
     this.socket.emit('command', payload);

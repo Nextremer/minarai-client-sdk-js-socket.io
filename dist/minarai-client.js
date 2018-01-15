@@ -250,7 +250,10 @@ var MinaraiClient = (function (_super) {
                 userId: this.userId,
                 deviceId: this.deviceId,
             },
-            body: { name, extra },
+            body: {
+                name: name,
+                extra: extra,
+            },
         };
         logger.obj('send-command', payload);
         this.socket.emit('command', payload);
