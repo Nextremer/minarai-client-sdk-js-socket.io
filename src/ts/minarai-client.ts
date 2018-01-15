@@ -285,7 +285,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
           return { "error": "url dose not exist" };
         }
 
-        return { ok: true, [res.data.message === "ok" ? "result" : "error"]: { url } };
+        return { ok: true, [res.data.message === "ok" ? "result" : "error"]: { url: url } };
       })
       .catch((err) => {
         return { err };

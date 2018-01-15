@@ -300,7 +300,7 @@ var MinaraiClient = (function (_super) {
             if (!url) {
                 return { "error": "url dose not exist" };
             }
-            return (_a = { ok: true }, _a[res.data.message === "ok" ? "result" : "error"] = { url }, _a);
+            return (_a = { ok: true }, _a[res.data.message === "ok" ? "result" : "error"] = { url: url }, _a);
             var _a;
         })
             .catch(function (err) {
