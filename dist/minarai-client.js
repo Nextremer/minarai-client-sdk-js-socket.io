@@ -304,7 +304,7 @@ var MinaraiClient = (function (_super) {
             var _a;
         })
             .catch(function (err) {
-            return { err };
+            return { err: err };
         });
     };
     MinaraiClient.prototype.getImageUrl = function (url, type) {
