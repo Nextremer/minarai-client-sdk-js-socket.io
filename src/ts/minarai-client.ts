@@ -3,7 +3,7 @@ const axios = require('axios');
 const querystring = require('querystring');
 import logger from './logger';
 
-const CONNECTOR_URL = "https://socketio-connector.minarai.cloud";
+const CONNECTOR_URL = "https://socketio-connector.minarai.ch";
 const DEFAULT_API_VERSION = "v1";
 
 const yellow = '\u001b[33m';
