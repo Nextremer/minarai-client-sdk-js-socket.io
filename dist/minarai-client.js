@@ -258,6 +258,12 @@ var MinaraiClient = (function (_super) {
         logger.obj('send-command', payload);
         this.socket.emit('command', payload);
     };
+    MinaraiClient.prototype.call = function (extra) {
+        this.sendCommand('call', extra);
+    };
+    MinaraiClient.prototype.cancelCalling = function (extra) {
+        this.sendCommand('cancel-calling', extra);
+    };
     MinaraiClient.prototype.getLogs = function (options) {
         if (options === void 0) { options = {}; }
         var timestamp = new Date().getTime();
