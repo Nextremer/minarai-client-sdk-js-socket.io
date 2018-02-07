@@ -237,6 +237,14 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     this.socket.emit('command', payload);
   }
 
+  public call(extra) {
+    this.sendCommand('call', extra);
+  }
+
+  public cancelCalling(extra) {
+    this.sendCommand('cancel-calling', extra);
+  }
+
   public getLogs(options: IGetLogsOptions = {}) {
     const timestamp = new Date().getTime();
     const payload = {
