@@ -26,7 +26,7 @@ yarn add minarai-client-sdk-js-socket.io
 ```js
 
 const io = require("socket.io-client");
-const MinaraiClient = require("minarai-client-sdk-js-socket.io");
+const MinaraiClient = require("minarai-client-sdk-js-socket.io").default;
 
 // For ES2015~
 // import io from 'socket.io-client';
