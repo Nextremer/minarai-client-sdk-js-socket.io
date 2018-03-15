@@ -9,6 +9,7 @@ A SDK that enables you to connect minarai easily on Node.js, browser both.
 * [socket.io-client](https://github.com/socketio/socket.io-client)
 * [rollup](https://github.com/rollup/rollup)
 * [EventEmitter2](https://github.com/asyncly/EventEmitter2)
+* (if you use this on Node.js) Node.js 7.x, 8.x
 
 ## Install
 Using npm:
@@ -23,8 +24,13 @@ yarn add minarai-client-sdk-js-socket.io
 
 ## Usage
 ```js
-import io from 'socket.io-client';
-import MinaraiClient from 'minarai-client-sdk-js-socket-io';
+
+const io = require("socket.io-client");
+const MinaraiClient = require("minarai-client-sdk-js-socket.io");
+
+// For ES2015~
+// import io from 'socket.io-client';
+// import MinaraiClient from 'minarai-client-sdk-js-socket-io';
 
 const minaraiClient = new MinaraiClient({
   io: io, /* Socket.io object */
@@ -42,7 +48,7 @@ minaraiClient.on('connect', function(){
   console.log("## socket.io connected. trying to join as minarai client");
 });
 minaraiClient.on('joined', function(){
-  console.log("## minarai CONNECTED");
+  console.log("## minarai joined");
 });
 minaraiClient.on( "message", function( data ){
   console.log("recieve message");
@@ -77,7 +83,8 @@ setInterval( function(){
 ### methods
  * **send**: send message to minarai
    * arguments
-     * uttr: string: message to send
+     * uttr: string/object: message to send
+       * if you pass an object, sdk sends it as is to minarai.
      * options :
        * lang: string: language option. ex: 'ja-JP'
        * extra: any: you can pass extra info to minarai.
