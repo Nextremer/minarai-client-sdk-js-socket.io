@@ -14,12 +14,12 @@ A SDK that enables you to connect minarai easily on Node.js, browser both.
 ## Install
 Using npm:
 ```sh
-npm install -S minarai-client-sdk-js-socket.io
+npm install -S minarai-client-sdk-js-socket-io
 ```
 
 Using yarn:
 ```sh
-yarn add minarai-client-sdk-js-socket.io
+yarn add minarai-client-sdk-js-socket-io
 ```
 
 ## Usage
