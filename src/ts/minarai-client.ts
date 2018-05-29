@@ -95,6 +95,11 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
       });
     });
 
+    this.socket.on('join-failed', (e: any) => {
+      logger.debug('join-failed');
+      this.emit('join-failed', e);
+    });
+
     this.socket.on('disconnect', () => {
       logger.debug('disconnect');
       this.emit('disconnected');
@@ -196,6 +201,18 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     };
     logger.obj('send', payload);
     this.socket.emit('message', payload);
+  }
+
+  public login(id, pass) {
+    this.socket.emit('join-as-client', {
+      applicationId: this.applicationId,
+      applicationSecret: this.applicationSecret,
+      clientId: this.clientId,
+      userId: this.userId,
+      deviceId: this.deviceId,
+      user_id: id,
+      password: pass,
+    });
   }
 
   public sendSystemCommand(command, payload) {
