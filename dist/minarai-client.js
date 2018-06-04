@@ -128,6 +128,10 @@ var MinaraiClient = (function (_super) {
                 deviceId: _this.deviceId,
             });
         });
+        this.socket.on('join-failed', function (e) {
+            logger.debug('join-failed');
+            _this.emit('join-failed', e);
+        });
         this.socket.on('disconnect', function () {
             logger.debug('disconnect');
             _this.emit('disconnected');
@@ -220,6 +224,17 @@ var MinaraiClient = (function (_super) {
         };
         logger.obj('send', payload);
         this.socket.emit('message', payload);
+    };
+    MinaraiClient.prototype.login = function (id, pass) {
+        this.socket.emit('join-as-client', {
+            applicationId: this.applicationId,
+            applicationSecret: this.applicationSecret,
+            clientId: this.clientId,
+            userId: this.userId,
+            deviceId: this.deviceId,
+            user_id: id,
+            password: pass,
+        });
     };
     MinaraiClient.prototype.sendSystemCommand = function (command, payload) {
         logger.warn('This method (sendSystemCommand) is deprecated. Please use "sendCommand" instead.');
