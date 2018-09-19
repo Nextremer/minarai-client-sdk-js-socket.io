@@ -225,7 +225,7 @@ var MinaraiClient = (function (_super) {
         logger.obj('send', payload);
         this.socket.emit('message', payload);
     };
-    MinaraiClient.prototype.login = function (id, pass) {
+    MinaraiClient.prototype.login = function (id, pass, token) {
         this.socket.emit('join-as-client', {
             applicationId: this.applicationId,
             applicationSecret: this.applicationSecret,
@@ -234,6 +234,7 @@ var MinaraiClient = (function (_super) {
             deviceId: this.deviceId,
             user_id: id,
             password: pass,
+            token: token,
         });
     };
     MinaraiClient.prototype.sendSystemCommand = function (command, payload) {

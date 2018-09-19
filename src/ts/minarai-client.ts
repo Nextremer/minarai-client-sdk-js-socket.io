@@ -203,7 +203,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     this.socket.emit('message', payload);
   }
 
-  public login(id, pass) {
+  public login(id, pass, token) {
     this.socket.emit('join-as-client', {
       applicationId: this.applicationId,
       applicationSecret: this.applicationSecret,
@@ -212,6 +212,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
       deviceId: this.deviceId,
       user_id: id,
       password: pass,
+      token: token,
     });
   }
 
