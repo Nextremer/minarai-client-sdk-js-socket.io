@@ -101,6 +101,7 @@ cli.sendSystemCommand('happyEmotionDetected', { value: true });
 ### events
  * **connect**: when connected to minarai successfully
  * **joined**: when signed in to minarai as client successfully
+ * **join-failed**: when signing in to minarai was failed
  * **disconnected**: when disconnected to minarai successfully
  * **sync**: when you or your group send message to minarai(for sync message between multiple devices)
  * **sync-system-command**: when you or your group send system command to minarai(for sync system command between multiple devices)
