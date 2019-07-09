@@ -113,6 +113,7 @@ var MinaraiClient = (function (_super) {
         this.lang = opts.lang || 'ja-JP';
         this.imageUrl = socketIORootURL.replace(/\/$/, '') + "/" + apiVersion + "/upload-image";
         this.getImageByHeader = opts.getImageByHeader;
+        this.userAuth = opts.userAuth;
         logger.set({ debug: opts.debug, silent: opts.silent });
     }
     MinaraiClient.prototype.init = function () {
@@ -126,6 +127,7 @@ var MinaraiClient = (function (_super) {
                 clientId: _this.clientId,
                 userId: _this.userId,
                 deviceId: _this.deviceId,
+                userAuth: _this.userAuth,
             });
         });
         this.socket.on('join-failed', function (e) {
@@ -235,6 +237,7 @@ var MinaraiClient = (function (_super) {
             user_id: id,
             password: pass,
             token: token,
+            userAuth: this.userAuth,
         });
     };
     MinaraiClient.prototype.sendSystemCommand = function (command, payload) {
