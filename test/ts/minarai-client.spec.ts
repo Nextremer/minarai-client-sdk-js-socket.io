@@ -66,18 +66,11 @@ describe('MinaraiClient', () => {
     });
 
     describe('without required params', () => {
-      it('expect to throw InvalidArgumentError', () => {
+      it('expect to throw InvalidArgumentError(when io is null or applicationId is null)', () => {
         expect(() => {
           new MinaraiClient({
             ...constructorOptions,
             io: null,
-          })
-        }).to.throw(MinaraiClient.InvalidArgumentError);
-        expect(() => {
-          new MinaraiClient({
-            ...constructorOptions,
-            socketIORootURL: null,
-            applicationSecret: null,
           })
         }).to.throw(MinaraiClient.InvalidArgumentError);
         expect(() => {
