@@ -46,6 +46,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
   private deviceId: string|number;
   private lang: string|number;
   private userAuth: object;
+  private userProfile: object;
 
   constructor(opts: MinaraiClientConstructorOptions) {
     super();
@@ -80,6 +81,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
     this.imageUrl = `${socketIORootURL.replace(/\/$/, '')}/${apiVersion}/upload-image`;
     this.getImageByHeader = opts.getImageByHeader;
     this.userAuth = opts.userAuth;
+    this.userProfile = {};
 
     logger.set({debug: opts.debug, silent: opts.silent});
   }
@@ -115,6 +117,11 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
       this.clientId = data.clientId;
       this.userId = data.userId;
       this.deviceId = data.deviceId;
+
+      if (data.extra && data.extra.userProfile !== null) {
+        this.userProfile = Object.assign({}, this.userProfile, data.extra.userProfile);
+        this.userId = this.userProfile.userId;
+      }
 
       logger.obj('joined', data);
       this.emit('joined', data);
@@ -200,7 +207,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
       body: {
         message: uttr,
         position: options.position || {},
-        extra: options.extra || {},
+        extra: Object.assign(options.extra || {}, { labels: this.userProfile.labels }),
       },
     };
     logger.obj('send', payload);
