@@ -114,6 +114,7 @@ var MinaraiClient = (function (_super) {
         this.imageUrl = socketIORootURL.replace(/\/$/, '') + "/" + apiVersion + "/upload-image";
         this.getImageByHeader = opts.getImageByHeader;
         this.userAuth = opts.userAuth;
+        this.userProfile = {};
         logger.set({ debug: opts.debug, silent: opts.silent });
     }
     MinaraiClient.prototype.init = function () {
@@ -144,6 +145,10 @@ var MinaraiClient = (function (_super) {
             _this.clientId = data.clientId;
             _this.userId = data.userId;
             _this.deviceId = data.deviceId;
+            if (data.extra && data.extra.userProfile !== null) {
+                _this.userProfile = Object.assign({}, _this.userProfile, data.extra.userProfile);
+                _this.userId = _this.userProfile.userId;
+            }
             logger.obj('joined', data);
             _this.emit('joined', data);
         });
@@ -221,7 +226,7 @@ var MinaraiClient = (function (_super) {
             body: {
                 message: uttr,
                 position: options.position || {},
-                extra: options.extra || {},
+                extra: Object.assign(options.extra || {}, { labels: this.userProfile.labels }),
             },
         };
         logger.obj('send', payload);
