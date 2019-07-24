@@ -118,8 +118,8 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
       this.userId = data.userId;
       this.deviceId = data.deviceId;
 
-      if (data.extra && data.extra.userProfile !== null) {
-        this.userProfile = Object.assign({}, this.userProfile, data.extra.userProfile);
+      if (data.userProfile !== null) {
+        this.userProfile = Object.assign({}, this.userProfile, data.userProfile);
         this.userId = this.userProfile.userId;
       }
 
@@ -207,7 +207,10 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
       body: {
         message: uttr,
         position: options.position || {},
-        extra: Object.assign(options.extra || {}, { labels: this.userProfile.labels }),
+        userProfile: {
+          labels: this.userProfile.labels,
+        },
+        extra: options.extra,
       },
     };
     logger.obj('send', payload);

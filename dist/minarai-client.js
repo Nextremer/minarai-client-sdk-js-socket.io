@@ -145,8 +145,8 @@ var MinaraiClient = (function (_super) {
             _this.clientId = data.clientId;
             _this.userId = data.userId;
             _this.deviceId = data.deviceId;
-            if (data.extra && data.extra.userProfile !== null) {
-                _this.userProfile = Object.assign({}, _this.userProfile, data.extra.userProfile);
+            if (data.userProfile !== null) {
+                _this.userProfile = Object.assign({}, _this.userProfile, data.userProfile);
                 _this.userId = _this.userProfile.userId;
             }
             logger.obj('joined', data);
@@ -226,7 +226,10 @@ var MinaraiClient = (function (_super) {
             body: {
                 message: uttr,
                 position: options.position || {},
-                extra: Object.assign(options.extra || {}, { labels: this.userProfile.labels }),
+                userProfile: {
+                    labels: this.userProfile.labels,
+                },
+                extra: options.extra,
             },
         };
         logger.obj('send', payload);
