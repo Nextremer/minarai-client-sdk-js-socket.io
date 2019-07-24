@@ -288,6 +288,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
         timestampUnixTime: timestamp,
       },
       body: options,
+      userAuth: this.userAuth,
     };
     logger.obj('logs', payload);
     this.socket.emit('logs', payload);

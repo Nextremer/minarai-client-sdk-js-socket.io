@@ -302,6 +302,7 @@ var MinaraiClient = (function (_super) {
                 timestampUnixTime: timestamp,
             },
             body: options,
+            userAuth: this.userAuth,
         };
         logger.obj('logs', payload);
         this.socket.emit('logs', payload);
