@@ -145,7 +145,7 @@ var MinaraiClient = (function (_super) {
             _this.clientId = data.clientId;
             _this.userId = data.userId;
             _this.deviceId = data.deviceId;
-            if (data.userProfile !== null) {
+            if (!data.userProfile) {
                 _this.userProfile = Object.assign({}, _this.userProfile, data.userProfile);
                 _this.userId = _this.userProfile.userId;
             }
