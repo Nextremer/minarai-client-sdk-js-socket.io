@@ -226,9 +226,7 @@ var MinaraiClient = (function (_super) {
             body: {
                 message: uttr,
                 position: options.position || {},
-                userProfile: {
-                    labels: this.userProfile.labels,
-                },
+                userProfile: this.userProfile,
                 extra: options.extra,
             },
         };

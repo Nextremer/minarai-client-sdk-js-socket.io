@@ -207,9 +207,7 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
       body: {
         message: uttr,
         position: options.position || {},
-        userProfile: {
-          labels: this.userProfile.labels,
-        },
+        userProfile: this.userProfile,
         extra: options.extra,
       },
     };
