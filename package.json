@@ -1,6 +1,6 @@
 {
   "name": "minarai-client-sdk-js-socket-io",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Minarai Client SDK for Socket.io(Javascript)",
   "main": "dist/minarai-client.js",
   "repository": "git@github.com:Nextremer/minarai-client-sdk-js-socket.io.git",
