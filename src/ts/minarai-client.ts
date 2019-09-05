@@ -212,6 +212,9 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
       },
     };
 
+    // SocketIOのack機能でrequestIdを受け取っている
+    // 背景はこちら参照:
+    //   https://github.com/Nextremer/minarai-client-sdk-js-socket.io/pull/33
     const makeAck = resolve => data => resolve(data);
     return new Promise((resolve) => {
       const ack = makeAck(resolve);

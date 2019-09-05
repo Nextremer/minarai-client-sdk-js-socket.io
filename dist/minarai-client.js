@@ -231,6 +231,9 @@ var MinaraiClient = (function (_super) {
                 extra: options.extra,
             },
         };
+        // SocketIOのack機能でrequestIdを受け取っている
+        // 背景はこちら参照:
+        //   https://github.com/Nextremer/minarai-client-sdk-js-socket.io/pull/33
         var makeAck = function (resolve) { return function (data) { return resolve(data); }; };
         return new Promise(function (resolve) {
             var ack = makeAck(resolve);
