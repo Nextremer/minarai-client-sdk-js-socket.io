@@ -210,6 +210,7 @@ var MinaraiClient = (function (_super) {
         });
     };
     MinaraiClient.prototype.send = function (uttr, options) {
+        var _this = this;
         options = Object.assign({}, { lang: 'ja-JP' }, options || {});
         var timestamp = new Date().getTime();
         var payload = {
@@ -230,8 +231,12 @@ var MinaraiClient = (function (_super) {
                 extra: options.extra,
             },
         };
-        logger.obj('send', payload);
-        this.socket.emit('message', payload);
+        var makeAck = function (resolve) { return function (data) { return resolve(data); }; };
+        return new Promise(function (resolve) {
+            var ack = makeAck(resolve);
+            logger.obj('send', payload);
+            _this.socket.emit('message', payload, ack);
+        });
     };
     MinaraiClient.prototype.login = function (id, pass, token) {
         this.socket.emit('join-as-client', {

@@ -211,8 +211,13 @@ export default class MinaraiClient extends EventEmitter2.EventEmitter2 {
         extra: options.extra,
       },
     };
-    logger.obj('send', payload);
-    this.socket.emit('message', payload);
+
+    const makeAck = resolve => data => resolve(data);
+    return new Promise((resolve) => {
+      const ack = makeAck(resolve);
+      logger.obj('send', payload);
+      this.socket.emit('message', payload, ack);
+    });
   }
 
   public login(id, pass, token) {
